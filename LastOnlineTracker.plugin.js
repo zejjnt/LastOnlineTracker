@@ -1,3 +1,9 @@
+/*
+ * Vencord, a Discord client mod
+ * Copyright (c) 2026 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 /**
  * @name LastOnlineTracker
  * @author k1ng_op
@@ -167,7 +173,7 @@ module.exports = class LastOnlineTracker {
     }
 
     scan() {
-        document.querySelectorAll('[data-list-item-id]').forEach(row => {
+        document.querySelectorAll("[data-list-item-id]").forEach(row => {
             const id = this.getRecipientId(row);
             if (!id) return;
             if (!this.knownStatus.has(id)) { this.knownStatus.set(id, this.status(id)); evict(this.knownStatus); }
@@ -228,7 +234,7 @@ module.exports = class LastOnlineTracker {
             return div;
         }
 
-        const React = BdApi.React;
+        const { React } = BdApi;
         const self = this;
         const field = (id, name, options, value, onChange) =>
             React.createElement(SettingItem, { id, name },

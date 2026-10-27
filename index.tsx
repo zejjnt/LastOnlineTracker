@@ -1,10 +1,16 @@
-import definePlugin, { OptionType } from "@utils/types";
-import { definePluginSettings } from "@api/Settings";
+/*
+ * Vencord, a Discord client mod
+ * Copyright (c) 2026 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 import { DataStore } from "@api/index";
-import { openModal } from "@utils/modal";
-import { React, ReactDOM, Forms, Modal } from "@webpack/common";
-import { findByPropsLazy } from "@webpack";
 import { addMemberListDecorator, removeMemberListDecorator } from "@api/MemberListDecorators";
+import { definePluginSettings } from "@api/Settings";
+import { openModal } from "@utils/modal";
+import definePlugin, { OptionType } from "@utils/types";
+import { findByPropsLazy } from "@webpack";
+import { Forms, Modal,React, ReactDOM } from "@webpack/common";
 
 const PresenceStore = findByPropsLazy("getStatus", "getActivities");
 const MAX_TRACKED = 500;
