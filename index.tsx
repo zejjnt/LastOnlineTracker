@@ -1,15 +1,14 @@
 import definePlugin, { OptionType } from "@utils/types";
 import { definePluginSettings } from "@api/Settings";
 import { DataStore } from "@api/index";
-import { openModal } from "@utils/modal";
-import { React, ReactDOM, Forms, Modal } from "@webpack/common";
+import { ConfirmModal, openModal, React, ReactDOM } from "@webpack/common";
 import { findByPropsLazy } from "@webpack";
 import { addMemberListDecorator, removeMemberListDecorator } from "@api/MemberListDecorators";
 
 const PresenceStore = findByPropsLazy("getStatus", "getActivities");
 const MAX_TRACKED = 500;
 const STORE_KEY = "LastOnlineTracker_data";
-const btnStyle = { padding: "8px 16px", borderRadius: "4px", cursor: "pointer", fontWeight: 500, fontSize: "14px" } as const;
+const textStyle = { color: "var(--text-default, var(--text-normal))", fontSize: "16px", lineHeight: "22px" } as const;
 
 let persistArmed = false;
 let loaded = false;
@@ -89,23 +88,6 @@ function isOffline(id: string) {
     }
 }
 
-function WarnModal({ modalProps, onConfirm }: { modalProps: any; onConfirm: () => void; }) {
-    return (
-        <Modal {...modalProps} title="Before you enable this">
-            <Forms.FormText style={{ margin: "16px 0", fontSize: "16px", lineHeight: "22px", color: "var(--text-normal)" }}>
-                Don't turn this on if you don't know how persistent last-seen works.
-                Saved times only update when that person goes offline again — they
-                don't refresh on their own, so a saved time can sit there and look
-                outdated. Don't blame the plugin for showing an inaccurate time.
-            </Forms.FormText>
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", margin: "8px 0 16px" }}>
-                <div onClick={modalProps.onClose} style={{ ...btnStyle, background: "transparent", color: "var(--text-normal)" }}>Cancel</div>
-                <div onClick={() => { onConfirm(); modalProps.onClose(); }} style={{ ...btnStyle, background: "#da373c", color: "#fff" }}>I understand, enable it</div>
-            </div>
-        </Modal>
-    );
-}
-
 function PersistToggle() {
     const [on, setOn] = React.useState(persistArmed);
 
@@ -119,14 +101,28 @@ function PersistToggle() {
     };
 
     const enable = () => openModal(modalProps => (
-        <WarnModal modalProps={modalProps} onConfirm={() => { persistArmed = true; save(); setOn(true); }} />
+        <ConfirmModal
+            {...modalProps}
+            variant="critical-primary"
+            title="Before you enable this"
+            confirmText="I understand, enable it"
+            cancelText="Cancel"
+            onConfirm={() => { persistArmed = true; save(); setOn(true); }}
+        >
+            <div style={textStyle}>
+                Don't turn this on if you don't know how persistent last-seen works.
+                Saved times only update when that person goes offline again, they
+                don't refresh on their own, so a saved time can sit there and look
+                outdated. Don't blame the plugin for showing an inaccurate time.
+            </div>
+        </ConfirmModal>
     ));
 
     return (
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
-            <Forms.FormText style={{ color: "var(--text-normal)", fontSize: "16px", flex: 1 }}>
+            <div style={{ ...textStyle, flex: 1 }}>
                 keep last-seen saved after Discord restarts. OFF by default.
-            </Forms.FormText>
+            </div>
             <div onClick={() => (on ? disable() : enable())} style={{
                 width: "40px", height: "24px", borderRadius: "12px", cursor: "pointer", position: "relative", flexShrink: 0,
                 background: on ? "#5865f2" : "#80848e", transition: "background-color 0.2s ease"
